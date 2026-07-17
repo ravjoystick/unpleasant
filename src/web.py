@@ -298,6 +298,7 @@ def api_meta():
         A Flask JSON response consumed by the frontend's `init()` to
         populate the language selector, book filter, and category tab bar.
     """
+    import hebrew
     cats = sorted(
         CATEGORIES.values(),
         key=lambda c: (CHAPTER_NUMBERS.get(c['name'], 999), c['name']),
@@ -306,6 +307,7 @@ def api_meta():
         'categories': [{
             'name':      c['name'],
             'nice_name': c['nice_name'],
+            'heb_name':  hebrew.category_hebrew(c['name']),
             'chapter':   CHAPTER_NUMBERS.get(c['name']),
             'count':     len(c['verses']),
         } for c in cats],
@@ -495,6 +497,8 @@ _HTML = r"""<!DOCTYPE html>
   --chm-col: #5b9bd5;
   --row-odd: #1a1a35;
   --row-evn: #12122a;
+  --txt-cat:   11px;
+  --txt-verse: 13px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
@@ -571,8 +575,8 @@ thead th{position:sticky;top:0;z-index:2;background:var(--panel2);color:var(--he
 th.c-heb,td.c-heb{text-align:right}
 th.c-cat{text-align:left}
 .c-lang{width:45%}.c-heb{width:30%}.c-cat{width:25%}
-tbody td{padding:10px 13px;vertical-align:top;line-height:1.55;font-size:13px}
-tbody td.c-heb{direction:rtl;font-size:15px;color:#d4c5e8;font-family:'Noto Serif Hebrew','David',serif}
+tbody td{padding:10px 13px;vertical-align:top;line-height:1.55;font-size:var(--txt-verse);transition:.1s font-size}
+tbody td.c-heb{direction:rtl;font-size:calc(var(--txt-verse) + 2px);color:#d4c5e8;font-family:'Noto Serif Hebrew','David',serif}
 tbody td.c-cat{font-size:11px}
 .td-cat-chip{display:inline-block;background:rgba(192,57,43,.18);color:var(--accent);border-radius:3px;padding:1px 6px;margin:1px 2px 1px 0;font-size:10px}
 tbody tr.even{background:var(--row-evn)}
@@ -586,11 +590,12 @@ tbody tr{cursor:pointer}
 
 /* category tab bar — small pill buttons, replaces the old category <select> */
 .cat-tabbar{display:flex;align-items:center;gap:5px;padding:7px 14px;background:var(--nav-bg);flex-shrink:0;flex-wrap:wrap;border-bottom:1px solid var(--panel2)}
-.cat-tab{font-size:11px;padding:4px 10px;border-radius:999px;white-space:nowrap;background:var(--panel);color:var(--dim);border:1px solid var(--panel2);cursor:pointer;font-family:inherit;transition:.15s all}
+.cat-tab{font-size:var(--txt-cat);padding:4px 10px;border-radius:999px;white-space:nowrap;background:var(--panel);color:var(--dim);border:1px solid var(--panel2);cursor:pointer;font-family:inherit;transition:.15s all,.1s font-size}
 .cat-tab:hover{border-color:var(--accent2);color:var(--text)}
 .cat-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
-.cat-tab .ct-n{font-family:monospace;font-size:9px;opacity:.65;margin-right:3px}
-.cat-tab .ct-c{font-size:9px;opacity:.75;margin-left:4px}
+.cat-tab .ct-n{font-family:monospace;font-size:calc(var(--txt-cat) - 2px);opacity:.65;margin-right:3px}
+.cat-tab .ct-heb{font-family:'Noto Serif Hebrew','David','Times New Roman',serif;font-size:var(--txt-cat);opacity:.8;margin-left:6px;direction:rtl}
+.cat-tab .ct-c{font-size:calc(var(--txt-cat) - 2px);opacity:.75;margin-left:4px}
 .cat-tab-sep{width:1px;height:15px;background:var(--panel2);margin:0 3px;flex-shrink:0}
 
 /* overview panel */
@@ -608,6 +613,7 @@ tbody tr{cursor:pointer}
 .ov-row.pending:hover{background:none}
 .ov-num{font-family:monospace;font-size:11px;color:var(--dim);width:20px;text-align:right;flex-shrink:0}
 .ov-title{flex:1}
+.ov-heb{font-family:'Noto Serif Hebrew','David','Times New Roman',serif;font-size:12px;color:var(--dim);direction:rtl}
 .ov-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(192,57,43,.18);color:var(--accent);font-weight:600}
 .ov-badge.muted{background:var(--panel2);color:var(--dim)}
 
@@ -635,6 +641,8 @@ select option{background:var(--panel2);color:var(--text)}
   <span class="app-title">God: The Most Unpleasant Character in All Fiction</span>
   <span class="fk">Language</span>
   <select id="sel-lang" style="width:150px"></select>
+  <span class="fk" style="margin-left:10px" title="Category button text size">Tabs</span>
+  <input id="rng-cat-size" type="range" min="9" max="16" step="1" value="11" title="Category button text size" style="width:70px">
   <button class="mode-btn"        onclick="setMode('explore')">Explore</button>
   <button class="mode-btn active" onclick="setMode('search')">Catalogue</button>
 </div>
@@ -668,6 +676,8 @@ select option{background:var(--panel2);color:var(--text)}
     <select id="sel-book" style="width:152px"></select>
     <span class="fk" style="margin-left:6px">Search</span>
     <input id="inp-search" type="text" style="flex:1;max-width:260px" placeholder="notes, text, tags…" autocomplete="off">
+    <span class="fk" style="margin-left:6px" title="Verse text size">Text</span>
+    <input id="rng-verse-size" type="range" min="11" max="22" step="1" value="13" title="Verse text size" style="width:70px">
     <span id="lbl-count"></span>
   </div>
 
@@ -707,6 +717,21 @@ async function api(path, params){
   if(!r.ok) throw new Error(r.statusText);
   return r.json();
 }
+
+// ── text size controls ───────────────────────────────────────────────────────
+function initSizeControl(rangeId, cssVar, storageKey, fallback){
+  const root  = document.documentElement.style;
+  const input = $(rangeId);
+  const saved = parseInt(localStorage.getItem(storageKey), 10) || fallback;
+  root.setProperty(cssVar, saved+'px');
+  input.value = saved;
+  input.addEventListener('input', ()=>{
+    root.setProperty(cssVar, input.value+'px');
+    localStorage.setItem(storageKey, input.value);
+  });
+}
+initSizeControl('rng-cat-size',   '--txt-cat',   'unpleasantCatTextSize',   11);
+initSizeControl('rng-verse-size', '--txt-verse', 'unpleasantVerseTextSize', 13);
 
 let exploreLoaded = false;
 
@@ -990,7 +1015,8 @@ function renderOverview(){
     const cat = cats.find(c=>c.chapter===n);
     if(cat){
       rows.push('<div class="ov-row" data-key="'+esc(cat.name)+'"><span class="ov-num">'+n+'.</span>'+
-        '<span class="ov-title">'+esc(cat.nice_name)+'</span>'+
+        '<span class="ov-title">'+esc(cat.nice_name)+
+        (cat.heb_name?' <span class="ov-heb">'+esc(cat.heb_name)+'</span>':'')+'</span>'+
         '<span class="ov-badge">'+cat.count+' verses</span></div>');
     } else {
       const title = n===28 ? 'What About Jesus?' : '—';
@@ -1037,6 +1063,7 @@ function renderCatTabbar(){
   META.categories.forEach(c=>{
     html += '<button class="cat-tab" data-key="'+esc(c.name)+'">'+
       '<span class="ct-n">'+(c.chapter??'')+'</span>'+esc(c.nice_name)+
+      (c.heb_name?'<span class="ct-heb">'+esc(c.heb_name)+'</span>':'')+
       '<span class="ct-c">'+c.count+'</span></button>';
   });
   html += '<span class="cat-tab-sep"></span>';

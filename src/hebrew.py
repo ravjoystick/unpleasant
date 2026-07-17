@@ -202,6 +202,57 @@ _BOOK_DATA: list[tuple[str, str, str]] = [
 ]
 
 # ---------------------------------------------------------------------------
+# Character-flaw category names in Hebrew.
+# Keyed by the category slug used in src/categories/*.py (its 'name' field).
+# Translations aim for a natural Modern Hebrew adjective/phrase rather than
+# a literal or biblical rendering; a few (vaccicidal, filicidal, etc.) are
+# rare English coinages with no single-word Hebrew equivalent, so those are
+# short descriptive phrases instead.
+# ---------------------------------------------------------------------------
+CATEGORY_NAMES: dict[str, str] = {
+    'jealous':                  'קנאי',
+    'petty':                    'קטנוני',
+    'unjust':                   'לא צודק',
+    'unforgiving':              'לא סלחני',
+    'control_freak':            'שתלטן',
+    'vindictive':               'נקמני',
+    'bloodthirsty':             'צמא דם',
+    'ethnic_cleanser':          'מבצע טיהור אתני',
+    'misogynistic':             'שונא נשים',
+    'homophobic':               'הומופובי',
+    'racist':                   'גזעני',
+    'infanticidal':             'רוצח תינוקות',
+    'genocidal':                'מבצע רצח עם',
+    'filicidal':                'הורג את ילדיו',
+    'pestilential':             'מביא מגפות',
+    'megalomaniacal':           'מגלומני',
+    'sadomasochistic':          'סאדו-מזוכיסטי',
+    'capriciously_malevolent':  'זדוני והפכפך',
+    'bully':                    'בריון',
+    'pyromaniacal':             'פירומני',
+    'angry':                    'כעסן',
+    'merciless':                'חסר רחמים',
+    'curse_hurling':            'מטיח קללות',
+    'vaccicidal':               'הורג בקר',
+    'aborticidal':              'גורם הפלות',
+    'cannibalistic':            'קניבלי',
+    'slavemonger':              'סוחר עבדים',
+}
+
+
+def category_hebrew(slug: str) -> str:
+    """Look up the Hebrew name for a category slug.
+
+    Args:
+        slug: A category's `name` field, e.g. ``'genocidal'``.
+
+    Returns:
+        The Hebrew name, or ``''`` if `slug` has no known translation.
+    """
+    return CATEGORY_NAMES.get(slug, '')
+
+
+# ---------------------------------------------------------------------------
 # Build lookup tables at import time.
 #
 # NUMERALS maps 1-100 -> HebrewNumeral, BOOKS maps English book name ->
