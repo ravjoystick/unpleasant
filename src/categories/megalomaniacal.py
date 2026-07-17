@@ -1,4 +1,20 @@
-# MEGALOMANIACAL =
+# Category data: Megalomaniacal (13 verses).
+#
+# Loaded via ast.literal_eval() in web.py / reader.py / ui.py -- this file
+# must stay a single dict literal, so documentation here is kept as '#'
+# comments (stripped before parsing) rather than a real docstring.
+#
+# Schema:
+#   name        (str)  category slug; matches this filename
+#   nice_name   (str)  human-readable label shown in the UI
+#   dictionary  (str)  dictionary-style definition of the flaw
+#   verses      (dict) int id -> {
+#       notes    (str)       why this verse qualifies
+#       book     (str)       Bible book name
+#       chapter  (int)       chapter number
+#       verse    (int|list)  verse number(s)
+#       search   (list[str]) free-text search keywords
+#   }
 {
     'name': 'megalomaniacal',
     'nice_name': 'Megalomaniacal',
