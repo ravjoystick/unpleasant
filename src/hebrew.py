@@ -1,9 +1,25 @@
+"""Hebrew gematria numerals and biblical book names.
+
+Provides structured lookup tables (NUMERALS, BOOKS) plus conversion
+helpers, built at import time from the raw data below. Consumed by
+web.py's ``/api/gematria`` route to render the reference tables in the
+Explore UI.
+"""
 from __future__ import annotations
 from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
 class HebrewNumeral:
+    """A single Hebrew gematria numeral (1-100).
+
+    Attributes:
+        number: The integer value this numeral represents.
+        hebrew: The Hebrew numeral string, e.g. ``'יא'``.
+        unicode: Unicode codepoints of each Hebrew letter, e.g. ``('U+05D9',)``.
+        html: HTML numeric character references for each letter.
+        say: Romanised pronunciation, e.g. ``'Yod Alef'``.
+    """
     number: int
     hebrew: str
     unicode: tuple[str, ...]
@@ -11,11 +27,19 @@ class HebrewNumeral:
     say: str
 
     def __str__(self) -> str:
+        """Return the Hebrew numeral string (same as `self.hebrew`)."""
         return self.hebrew
 
 
 @dataclass(frozen=True)
 class HebrewBook:
+    """The Hebrew name of a book of the Bible.
+
+    Attributes:
+        english: The canonical English book name, e.g. ``'Genesis'``.
+        hebrew: The Hebrew book name, e.g. ``'בראשית'``.
+        say: Romanised pronunciation, e.g. ``'Bereshit'``.
+    """
     english: str
     hebrew: str
     say: str
@@ -178,7 +202,11 @@ _BOOK_DATA: list[tuple[str, str, str]] = [
 ]
 
 # ---------------------------------------------------------------------------
-# Build lookup tables at import time
+# Build lookup tables at import time.
+#
+# NUMERALS maps 1-100 -> HebrewNumeral, BOOKS maps English book name ->
+# HebrewBook. The private _BY_HEBREW / _BOOKS_BY_HEBREW tables invert those
+# for the from_hebrew() / book_from_hebrew() lookups below.
 # ---------------------------------------------------------------------------
 NUMERALS: dict[int, HebrewNumeral] = {
     n: HebrewNumeral(n, h, tuple(u), tuple(html), say)
@@ -200,35 +228,96 @@ _BOOKS_BY_HEBREW: dict[str, str] = {v.hebrew: k for k, v in BOOKS.items()}
 # ---------------------------------------------------------------------------
 
 def to_hebrew(n: int) -> str:
-    """Return the Hebrew numeral string for integer n (1–100)."""
+    """Convert an integer to its Hebrew numeral string.
+
+    Args:
+        n: Integer value in the range 1-100.
+
+    Returns:
+        The Hebrew numeral string, e.g. ``'יא'`` for 11.
+
+    Raises:
+        KeyError: If `n` is outside the 1-100 range covered by NUMERALS.
+    """
     return NUMERALS[n].hebrew
 
 
 def from_hebrew(s: str) -> int:
-    """Return the integer for a Hebrew numeral string. Raises KeyError if unknown."""
+    """Convert a Hebrew numeral string back to its integer value.
+
+    Args:
+        s: A Hebrew numeral string, e.g. ``'יא'``.
+
+    Returns:
+        The integer value the numeral represents.
+
+    Raises:
+        KeyError: If `s` does not match any known numeral.
+    """
     return _BY_HEBREW[s]
 
 
 def to_say(n: int) -> str:
-    """Return the romanised pronunciation for integer n (1–100)."""
+    """Return the romanised pronunciation for a numeral.
+
+    Args:
+        n: Integer value in the range 1-100.
+
+    Returns:
+        Romanised pronunciation, e.g. ``'Yod Alef'`` for 11.
+    """
     return NUMERALS[n].say
 
 
 def to_html(n: int) -> list[str]:
-    """Return HTML entity list for integer n (1–100)."""
+    """Return the HTML numeric character references for a numeral.
+
+    Args:
+        n: Integer value in the range 1-100.
+
+    Returns:
+        One HTML entity string per Hebrew letter, e.g. ``['&#1497;', '&#1488;']``.
+    """
     return list(NUMERALS[n].html)
 
 
 def to_unicode(n: int) -> list[str]:
-    """Return Unicode codepoint list for integer n (1–100)."""
+    """Return the Unicode codepoints for a numeral.
+
+    Args:
+        n: Integer value in the range 1-100.
+
+    Returns:
+        One codepoint string per Hebrew letter, e.g. ``['U+05D9', 'U+05D0']``.
+    """
     return list(NUMERALS[n].unicode)
 
 
 def book_hebrew(english_name: str) -> str:
-    """Return the Hebrew name for an English book name."""
+    """Look up the Hebrew name for an English book name.
+
+    Args:
+        english_name: Canonical English book name, e.g. ``'Genesis'``.
+
+    Returns:
+        The Hebrew book name, e.g. ``'בראשית'``.
+
+    Raises:
+        KeyError: If `english_name` is not a recognised book.
+    """
     return BOOKS[english_name].hebrew
 
 
 def book_from_hebrew(hebrew_name: str) -> str:
-    """Return the English book name for a Hebrew book name."""
+    """Look up the English name for a Hebrew book name.
+
+    Args:
+        hebrew_name: A Hebrew book name, e.g. ``'בראשית'``.
+
+    Returns:
+        The canonical English book name, e.g. ``'Genesis'``.
+
+    Raises:
+        KeyError: If `hebrew_name` is not a recognised book.
+    """
     return _BOOKS_BY_HEBREW[hebrew_name]

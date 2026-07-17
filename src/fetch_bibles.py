@@ -22,13 +22,31 @@ for i, book in enumerate(_kjv, start=1):
 
 
 def fetch(url, timeout=60):
+    """Fetch and parse a JSON document from a URL.
+
+    Args:
+        url: The URL to GET.
+        timeout: Request timeout in seconds.
+
+    Returns:
+        The parsed JSON response body.
+    """
     req = urllib.request.Request(url, headers={'User-Agent': 'unpleasant-bible-fetcher/1.0'})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return json.loads(r.read())
 
 
 def convert(api_data):
-    """Convert getbible API response to our flat list format."""
+    """Convert a getbible.net API response to this project's flat book format.
+
+    Args:
+        api_data: The parsed JSON response from `fetch`, containing a
+            ``'books'`` list of chapter/verse dicts.
+
+    Returns:
+        A list of ``{'abbrev': str, 'name': str, 'chapters': [[str, ...],
+        ...]}`` dicts, matching the format used by src/bibles/*.json.
+    """
     out = []
     for book in api_data['books']:
         nr      = book['nr']
@@ -42,6 +60,20 @@ def convert(api_data):
 
 
 def download(translation_key, out_filename):
+    """Download one translation from getbible.net and save it as JSON.
+
+    Skips the download if `out_filename` already exists in BIBLES_DIR.
+
+    Args:
+        translation_key: The getbible.net API key for the translation,
+            e.g. ``'aleppo'``.
+        out_filename: Filename to write under BIBLES_DIR, e.g.
+            ``'he_aleppo.json'``.
+
+    Returns:
+        True if the file exists on disk afterwards (already present or
+        successfully downloaded), False if the download failed.
+    """
     dest = os.path.join(BIBLES_DIR, out_filename)
     if os.path.exists(dest):
         print(f'  SKIP  {out_filename} (already exists)')
@@ -111,6 +143,7 @@ DOWNLOADS = [
 
 
 def main():
+    """Download every translation in DOWNLOADS and print a summary report."""
     print(f'Bible downloader — saving to: {BIBLES_DIR}')
     print(f'Using abbrev map from en_kjv.json ({len(_abbrev_map)} books)')
     print()
