@@ -295,6 +295,43 @@ def to_hebrew(n: int) -> str:
     return NUMERALS[n].hebrew
 
 
+# Hundreds digits (100/200/300/400), combined by repeating 'ת' (400) as
+# needed for anything past it — e.g. 500 = 'ת'+'ק' = 'תק'. Bible chapter
+# and verse numbers never get close to that range, but this keeps
+# to_hebrew_number() correct rather than silently capping at 100.
+_HUNDREDS: dict[int, str] = {1: 'ק', 2: 'ר', 3: 'ש', 4: 'ת'}
+
+
+def to_hebrew_number(n: int) -> str:
+    """Convert any positive integer to a Hebrew gematria numeral string.
+
+    Unlike to_hebrew(), this isn't limited to 1-100: it reuses NUMERALS
+    for the tens/units (1-99) and composes hundreds algorithmically from
+    'ק'/'ר'/'ש'/'ת', so chapter numbers like 119 (Psalm 119) still convert
+    correctly.
+
+    Args:
+        n: A positive integer, e.g. a Bible chapter or verse number.
+
+    Returns:
+        The Hebrew numeral string, e.g. ``'קיט'`` for 119.
+
+    Raises:
+        ValueError: If `n` is not a positive integer.
+    """
+    if n <= 0:
+        raise ValueError(f'to_hebrew_number() requires a positive integer, got {n}')
+    hundreds, remainder = divmod(n, 100)
+    parts: list[str] = []
+    while hundreds > 0:
+        step = min(hundreds, 4)
+        parts.append(_HUNDREDS[step])
+        hundreds -= step
+    if remainder:
+        parts.append(NUMERALS[remainder].hebrew)
+    return ''.join(parts)
+
+
 def from_hebrew(s: str) -> int:
     """Convert a Hebrew numeral string back to its integer value.
 

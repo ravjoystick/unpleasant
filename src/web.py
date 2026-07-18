@@ -172,6 +172,33 @@ def _format_ref(book: str, chapter: int, verses) -> str:
     return f'{book} {chapter}:{vv[0]}–{vv[-1]}'
 
 
+def _format_heb_ref(book: str, chapter: int, verses) -> str:
+    """Format a Bible reference using Hebrew book name and gematria numerals.
+
+    Same shape as `_format_ref` (book chapter:verse[–verse]), but with the
+    book name looked up in hebrew.BOOKS and the numbers converted via
+    hebrew.to_hebrew_number() instead of left as Arabic digits. Falls back
+    to the English book name for NT epistles/Revelation, which hebrew.BOOKS
+    doesn't cover.
+
+    Args:
+        book: English book name, e.g. ``'Genesis'``.
+        chapter: Chapter number.
+        verses: A single verse number or a list of verse numbers.
+
+    Returns:
+        e.g. ``'בראשית א:א'`` for Genesis 1:1.
+    """
+    import hebrew
+    heb_book = hebrew.BOOKS.get(book)
+    name = heb_book.hebrew if heb_book else book
+    vv = _normalise_verses(verses)
+    ch = hebrew.to_hebrew_number(chapter)
+    if len(vv) == 1:
+        return f'{name} {ch}:{hebrew.to_hebrew_number(vv[0])}'
+    return f'{name} {ch}:{hebrew.to_hebrew_number(vv[0])}–{hebrew.to_hebrew_number(vv[-1])}'
+
+
 def _get_text(bible: list, book: str, chapter: int, verses) -> str:
     """Look up and concatenate the text of one or more verses.
 
@@ -230,16 +257,17 @@ def _build_rows(mode: str, selection: str, lang_bible: list) -> list[tuple]:
 
     Returns:
         A list of ``(category_nice_name, reference, note, lang_text,
-        heb_text)`` tuples.
+        heb_text, heb_reference)`` tuples.
     """
     rows: list[tuple] = []
 
     def _add(cat: dict, entry: dict) -> None:
-        """Append one (category, ref, note, lang_text, heb_text) row for `entry`."""
-        ref   = _format_ref(entry['book'], entry['chapter'], entry['verse'])
-        ltext = _get_text(lang_bible, entry['book'], entry['chapter'], entry['verse'])
-        htext = _get_text(HEB_BIBLE,  entry['book'], entry['chapter'], entry['verse'])
-        rows.append((cat['nice_name'], ref, entry.get('notes', ''), ltext, htext))
+        """Append one (category, ref, note, lang_text, heb_text, heb_ref) row for `entry`."""
+        ref    = _format_ref(entry['book'], entry['chapter'], entry['verse'])
+        href   = _format_heb_ref(entry['book'], entry['chapter'], entry['verse'])
+        ltext  = _get_text(lang_bible, entry['book'], entry['chapter'], entry['verse'])
+        htext  = _get_text(HEB_BIBLE,  entry['book'], entry['chapter'], entry['verse'])
+        rows.append((cat['nice_name'], ref, entry.get('notes', ''), ltext, htext, href))
 
     if mode == 'category':
         cat = CATEGORIES.get(selection)
@@ -276,6 +304,7 @@ def _build_rows(mode: str, selection: str, lang_bible: list) -> list[tuple]:
         if len(parts) == 3:
             book, chapter, verse = parts[0], int(parts[1]), int(parts[2])
             ref   = f'{book} {chapter}:{verse}'
+            href  = _format_heb_ref(book, chapter, verse)
             ltext = _get_text(lang_bible, book, chapter, [verse])
             htext = _get_text(HEB_BIBLE,  book, chapter, [verse])
             hits  = VERSE_INDEX.get((book.lower(), chapter, verse), [])
@@ -285,6 +314,7 @@ def _build_rows(mode: str, selection: str, lang_bible: list) -> list[tuple]:
                 hits[0]['note']     if hits else '(not in any category)',
                 ltext,
                 htext,
+                href,
             ))
 
     return rows
@@ -459,8 +489,8 @@ def api_search():
         lang: Translation code to render verse text in (default ``'en_kjv'``).
 
     Returns:
-        A Flask JSON response: a list of row dicts with cat/ref/note/
-        lang_text/heb_text plus bio_name/chimo_name annotations.
+        A Flask JSON response: a list of row dicts with cat/ref/heb_ref/
+        note/lang_text/heb_text plus bio_name/chimo_name annotations.
     """
     mode  = request.args.get('mode',  'search')
     q     = request.args.get('q',     '')
@@ -473,6 +503,7 @@ def api_search():
         'note':      r[2],
         'lang_text': r[3],
         'heb_text':  r[4],
+        'heb_ref':   r[5],
         **_bio_for_ref(r[1]),
     } for r in rows])
 
@@ -498,7 +529,8 @@ def api_verse():
     lang  = request.args.get('lang', 'en_kjv')
     bible = BIBLES.get(lang, _KJV)
     rows  = _build_rows('verse', f'{book}|{ch}|{vs}', bible)
-    r     = rows[0] if rows else ('—', f'{book} {ch}:{vs}', '(not in any category)', '', '')
+    r     = rows[0] if rows else ('—', f'{book} {ch}:{vs}', '(not in any category)', '', '',
+                                   _format_heb_ref(book, ch, vs))
     idx   = NAME_MAP.get(book.lower())
     abbrev = _KJV[idx]['abbrev'].upper() if idx is not None else ''
     node  = UNIT_TREE.find(f'{abbrev}.{ch}.{vs}') if abbrev else None
@@ -508,6 +540,7 @@ def api_verse():
         'note':       r[2],
         'lang_text':  r[3],
         'heb_text':   r[4],
+        'heb_ref':    r[5],
         'bio_name':   node.bio_name   if node else None,
         'chimo_name': node.chimo_name if node else None,
         'top_bio':    node.top_bio(3)   if node else [],
@@ -1060,7 +1093,8 @@ function renderSrchRows(rows){
     tr.dataset.idx=i;
     const tdL=document.createElement('td'); tdL.className='c-lang';
     tdL.innerHTML='<strong style="font-size:11px;color:var(--dim)">'+esc(row.ref||'')+'</strong><br>'+esc(row.lang_text||'');
-    const tdH=document.createElement('td'); tdH.className='c-heb';  tdH.textContent=row.heb_text||'';
+    const tdH=document.createElement('td'); tdH.className='c-heb';
+    tdH.innerHTML='<strong style="font-size:11px;color:var(--dim)">'+esc(row.heb_ref||'')+'</strong><br>'+esc(row.heb_text||'');
     const tdC=document.createElement('td'); tdC.className='c-cat';
     tdC.innerHTML=[row.cat].filter(Boolean).map(t=>'<span class="td-cat-chip">'+esc(t)+'</span>').join('');
     tr.append(tdL,tdH,tdC);
