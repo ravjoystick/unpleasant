@@ -364,6 +364,63 @@ def api_book_counts():
     ])
 
 
+@app.route('/api/timeline')
+def api_timeline():
+    """Return per-book category breakdowns for the Timeline view.
+
+    Aggregates every catalogued verse by its KJV book (resolved through
+    NAME_MAP so book-name aliases like 'Psalm'/'Psalms' collapse together),
+    in canonical Genesis-to-Revelation order.
+
+    Returns:
+        A Flask JSON response: 'books' is a list of ``{name, heb_name,
+        abbrev, index, testament, total, categories: [{name, nice_name,
+        count}, ...]}`` entries, one per KJV book (heb_name is '' for the
+        NT epistles/Revelation, which hebrew.BOOKS doesn't cover);
+        'categories' echoes the api_meta() category list (name/nice_name/
+        chapter) for consistent colour assignment on the frontend.
+    """
+    import hebrew
+    per_book: dict[int, dict[str, int]] = {}
+    for cat in CATEGORIES.values():
+        for entry in cat['verses'].values():
+            idx = NAME_MAP.get(entry['book'].lower())
+            if idx is None:
+                continue
+            counts = per_book.setdefault(idx, {})
+            counts[cat['name']] = counts.get(cat['name'], 0) + 1
+
+    cat_chapter = {n: CHAPTER_NUMBERS.get(n, 999) for n in CATEGORIES}
+
+    books = []
+    for i, book in enumerate(_KJV):
+        counts = per_book.get(i, {})
+        cats = sorted(
+            ({'name': n, 'nice_name': CATEGORIES[n]['nice_name'], 'count': c}
+             for n, c in counts.items()),
+            key=lambda x: cat_chapter[x['name']],
+        )
+        heb_book = hebrew.BOOKS.get(book['name'])
+        books.append({
+            'name':       book['name'],
+            'heb_name':   heb_book.hebrew if heb_book else '',
+            'abbrev':     book['abbrev'],
+            'index':      i,
+            'testament':  'OT' if i < 39 else 'NT',
+            'total':      sum(counts.values()),
+            'categories': cats,
+        })
+
+    return jsonify({
+        'books': books,
+        'categories': sorted(
+            [{'name': n, 'nice_name': CATEGORIES[n]['nice_name'],
+              'chapter': CHAPTER_NUMBERS.get(n)} for n in CATEGORIES],
+            key=lambda c: (c['chapter'] or 999, c['name']),
+        ),
+    })
+
+
 def _bio_for_ref(ref: str) -> dict:
     """Look up a verse's bio/chemo annotation from UNIT_TREE by its reference string.
 
@@ -508,8 +565,9 @@ _HTML = r"""<!DOCTYPE html>
   --chm-col: #5b9bd5;
   --row-odd: #1a1a35;
   --row-evn: #12122a;
-  --txt-cat:   11px;
-  --txt-verse: 13px;
+  --txt-cat:    11px;
+  --txt-verse:  13px;
+  --tl-scale: 1.5;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
@@ -632,6 +690,32 @@ tbody tr{cursor:pointer}
 .ref-wrap{padding:0}
 td.c-heb-ref{direction:rtl;font-size:15px;color:#d4c5e8;font-family:'Noto Serif Hebrew','David',serif;width:20%}
 
+/* timeline view */
+.tl-ctrl{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--panel);flex-shrink:0;flex-wrap:wrap}
+.tl-chart-wrap{flex:1;overflow:auto;padding:20px 14px 0}
+.tl-chart{display:flex;align-items:flex-end;gap:2px;min-height:40px;min-width:min-content}
+.tl-col{display:flex;flex-direction:column;width:calc(16px * var(--tl-scale));flex-shrink:0;cursor:pointer;border-radius:2px 2px 0 0;overflow:hidden;transition:.1s width}
+.tl-col:hover{outline:1px solid var(--accent2)}
+.tl-col.nt-start{margin-left:8px;position:relative}
+.tl-col.nt-start::before{content:'NT';position:absolute;top:-16px;left:0;font-size:9px;color:var(--dim);font-family:system-ui,sans-serif}
+.tl-col.sel{outline:2px solid var(--accent)}
+.tl-seg{width:100%;height:calc(var(--count) * 3px * var(--tl-scale));flex-shrink:0}
+.tl-labels{display:flex;gap:2px;padding:2px 14px calc(130px + 14px * var(--tl-scale));min-width:min-content}
+.tl-label-wrap{width:calc(16px * var(--tl-scale));flex-shrink:0;position:relative}
+.tl-label{position:absolute;top:2px;left:50%;font-size:clamp(11px, calc(10px * var(--tl-scale)), 24px);color:var(--dim);white-space:nowrap;transform:rotate(60deg) translateX(2px);transform-origin:top left;font-family:system-ui,sans-serif}
+.tl-label-heb{font-family:'Noto Serif Hebrew','David','Times New Roman',serif;color:var(--dim);opacity:.85}
+.tl-label-dots{display:inline-flex;gap:2px;margin-left:5px;vertical-align:middle}
+.tl-label-dot{display:inline-block;width:clamp(4px, calc(4px * var(--tl-scale)), 10px);height:clamp(4px, calc(4px * var(--tl-scale)), 10px);border-radius:50%;flex-shrink:0}
+.tl-label-num{margin-left:5px;font-weight:700;color:var(--head);font-family:monospace}
+.tl-detail{padding:12px 18px 18px;border-top:1px solid var(--panel2);flex-shrink:0;max-height:180px;overflow-y:auto}
+.tl-detail.empty{color:var(--dim);font-style:italic;font-size:13px}
+.tl-detail-head{font-size:15px;font-weight:700;color:var(--head);margin-bottom:8px}
+.tl-detail-head .th{font-weight:400;color:var(--dim);font-size:12px;margin-left:8px}
+.tl-chips{display:flex;flex-wrap:wrap;gap:6px}
+.tl-chip{display:flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px 4px 6px;border-radius:20px;background:var(--panel2);color:var(--text);cursor:pointer;transition:.12s background}
+.tl-chip:hover{background:var(--accent2)}
+.tl-chip-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
 /* shared controls */
 .fk{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
 select,input[type=text]{background:var(--panel);color:var(--text);border:1px solid #2a2a4a;border-radius:3px;padding:4px 8px;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
@@ -654,8 +738,9 @@ select option{background:var(--panel2);color:var(--text)}
   <select id="sel-lang" style="width:150px"></select>
   <span class="fk" style="margin-left:10px" title="Category button text size">Tabs</span>
   <input id="rng-cat-size" type="range" min="9" max="16" step="1" value="11" title="Category button text size" style="width:70px">
-  <button class="mode-btn"        onclick="setMode('explore')">Explore</button>
-  <button class="mode-btn active" onclick="setMode('search')">Catalogue</button>
+  <button class="mode-btn"        data-mode="explore"  onclick="setMode('explore')">Explore</button>
+  <button class="mode-btn active" data-mode="search"   onclick="setMode('search')">Catalogue</button>
+  <button class="mode-btn"        data-mode="timeline" onclick="setMode('timeline')">Timeline</button>
 </div>
 
 <!-- EXPLORE VIEW -->
@@ -709,6 +794,20 @@ select option{background:var(--panel2);color:var(--text)}
   </div>
 </div>
 
+<!-- TIMELINE VIEW -->
+<div id="view-timeline" class="view" hidden>
+  <div class="tl-ctrl">
+    <span class="fk">God: The Most Unpleasant Character in All Fiction, across every book of the Bible</span>
+    <span class="fk" style="margin-left:auto" title="Zoom (scales bar width, height, and book-name labels together)">Scale</span>
+    <input id="rng-tl-scale" type="range" min="0.4" max="6" step="0.1" value="1.5" title="Zoom (scales bar width, height, and book-name labels together)" style="width:120px">
+  </div>
+  <div class="tl-chart-wrap">
+    <div id="tl-chart" class="tl-chart"></div>
+    <div id="tl-labels" class="tl-labels"></div>
+  </div>
+  <div id="tl-detail" class="tl-detail empty">Click a bar to see which categories cite that book.</div>
+</div>
+
 <script>
 'use strict';
 
@@ -729,34 +828,41 @@ async function api(path, params){
   return r.json();
 }
 
-// ── text size controls ───────────────────────────────────────────────────────
-function initSizeControl(rangeId, cssVar, storageKey, fallback){
+// ── size / scale controls ───────────────────────────────────────────────────
+function initSizeControl(rangeId, cssVar, storageKey, fallback, unit='px'){
   const root  = document.documentElement.style;
   const input = $(rangeId);
-  const saved = parseInt(localStorage.getItem(storageKey), 10) || fallback;
-  root.setProperty(cssVar, saved+'px');
+  const saved = parseFloat(localStorage.getItem(storageKey)) || fallback;
+  root.setProperty(cssVar, saved+unit);
   input.value = saved;
   input.addEventListener('input', ()=>{
-    root.setProperty(cssVar, input.value+'px');
+    root.setProperty(cssVar, input.value+unit);
     localStorage.setItem(storageKey, input.value);
   });
 }
 initSizeControl('rng-cat-size',   '--txt-cat',   'unpleasantCatTextSize',   11);
 initSizeControl('rng-verse-size', '--txt-verse', 'unpleasantVerseTextSize', 13);
+initSizeControl('rng-tl-scale',   '--tl-scale',   'unpleasantTlScale',      1.5, '');
 
-let exploreLoaded = false;
+let exploreLoaded  = false;
+let timelineLoaded = false;
 
 function setMode(m){
   mode = m;
-  $('view-explore').hidden = m!=='explore';
-  $('view-search').hidden  = m!=='search';
-  document.querySelectorAll('.mode-btn').forEach((b,i)=>
-    b.classList.toggle('active', (i===0&&m==='explore')||(i===1&&m==='search'))
+  $('view-explore').hidden  = m!=='explore';
+  $('view-search').hidden   = m!=='search';
+  $('view-timeline').hidden = m!=='timeline';
+  document.querySelectorAll('.mode-btn').forEach(b=>
+    b.classList.toggle('active', b.dataset.mode===m)
   );
   if(m==='explore' && !exploreLoaded){
     exploreLoaded = true;
     navHist = ['ROOT'];
     zoom('ROOT', false);
+  }
+  if(m==='timeline' && !timelineLoaded){
+    timelineLoaded = true;
+    loadTimeline();
   }
 }
 
@@ -1088,6 +1194,95 @@ function renderCatTabbar(){
       if(key==='overview') selectOverview();
       else if(key==='gematria' || key==='books') selectReference(key);
       else selectCategory(key);
+    });
+  });
+}
+
+// ── timeline ─────────────────────────────────────────────────────────────────
+let TIMELINE = null;
+let tlSelected = null;
+
+function catColor(name){
+  const c = META.categories.find(x=>x.name===name);
+  const chapter = (c && c.chapter) ? c.chapter : 1;
+  const hue = Math.round((chapter-1) * 360/27);
+  return 'hsl('+hue+',62%,55%)';
+}
+
+async function loadTimeline(){
+  TIMELINE = await api('/api/timeline');
+  renderTimeline();
+}
+
+function renderTimeline(){
+  const chart  = $('tl-chart');
+  const labels = $('tl-labels');
+  chart.innerHTML = '';
+  labels.innerHTML = '';
+
+  const frags = {chart: document.createDocumentFragment(), labels: document.createDocumentFragment()};
+
+  TIMELINE.books.forEach(b=>{
+    const col = document.createElement('div');
+    col.className = 'tl-col'+(b.testament==='NT' && b.index===39 ? ' nt-start' : '');
+    col.title = b.name+' — '+b.total+' verse'+(b.total!==1?'s':'')+
+      (b.categories.length ? ' across '+b.categories.length+' categor'+(b.categories.length!==1?'ies':'y') : '');
+    b.categories.forEach(c=>{
+      const seg = document.createElement('div');
+      seg.className = 'tl-seg';
+      seg.style.setProperty('--count', c.count);
+      seg.style.background = catColor(c.name);
+      col.appendChild(seg);
+    });
+    col.addEventListener('click', ()=>selectTimelineBook(b.index));
+    frags.chart.appendChild(col);
+
+    const lw = document.createElement('div');
+    lw.className = 'tl-label-wrap';
+    lw.innerHTML = '<span class="tl-label">'+esc(b.name)+
+      (b.heb_name?' <span class="tl-label-heb">'+esc(b.heb_name)+'</span>':'')+
+      (b.categories.length ?
+        ' <span class="tl-label-dots">'+
+          b.categories.map(c=>'<span class="tl-label-dot" style="background:'+catColor(c.name)+'" title="'+esc(c.nice_name)+' · '+c.count+'"></span>').join('')+
+        '</span>'+
+        ' <span class="tl-label-num">'+b.total+'</span>'
+      : '')+
+      '</span>';
+    frags.labels.appendChild(lw);
+  });
+
+  chart.appendChild(frags.chart);
+  labels.appendChild(frags.labels);
+}
+
+function selectTimelineBook(idx){
+  tlSelected = idx;
+  $('tl-chart').querySelectorAll('.tl-col').forEach((c,i)=>c.classList.toggle('sel', i===idx));
+
+  const b = TIMELINE.books[idx];
+  const d = $('tl-detail');
+  if(!b.categories.length){
+    d.className = 'tl-detail empty';
+    d.textContent = b.name+' — no flagged verses.';
+    return;
+  }
+  d.className = 'tl-detail';
+  d.innerHTML =
+    '<div class="tl-detail-head">'+esc(b.name)+
+      '<span class="th">'+b.total+' verse'+(b.total!==1?'s':'')+' · '+b.categories.length+' categor'+(b.categories.length!==1?'ies':'y')+'</span>'+
+    '</div>'+
+    '<div class="tl-chips">'+
+      b.categories.map(c=>
+        '<span class="tl-chip" data-key="'+esc(c.name)+'">'+
+          '<span class="tl-chip-dot" style="background:'+catColor(c.name)+'"></span>'+
+          esc(c.nice_name)+' · '+c.count+
+        '</span>'
+      ).join('')+
+    '</div>';
+  d.querySelectorAll('.tl-chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      setMode('search');
+      selectCategory(chip.dataset.key);
     });
   });
 }
