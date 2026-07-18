@@ -66,17 +66,28 @@ def _load_categories() -> dict[str, dict]:
 def _load_bibles() -> dict[str, list]:
     """Load every Bible translation JSON file from BIBLES_DIR.
 
+    he_tanakh.json embeds raw Sefaria HTML markup in its verse text (see
+    hebrew.clean_verse_text); it's cleaned here, once, at load time.
+
     Returns:
         A dict mapping translation code (filename without ``.json``) to its
         parsed book list.
     """
+    import hebrew
     bibles: dict[str, list] = {}
     for fname in sorted(os.listdir(BIBLES_DIR)):
         if not fname.endswith('.json'):
             continue
         path = os.path.join(BIBLES_DIR, fname)
         with open(path, encoding='utf-8-sig') as f:
-            bibles[fname[:-5]] = json.load(f)
+            data = json.load(f)
+        if fname == 'he_tanakh.json':
+            for book in data:
+                book['chapters'] = [
+                    [hebrew.clean_verse_text(v) for v in ch]
+                    for ch in book['chapters']
+                ]
+        bibles[fname[:-5]] = data
     return bibles
 
 

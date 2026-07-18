@@ -6,6 +6,8 @@ web.py's ``/api/gematria`` route to render the reference tables in the
 Explore UI.
 """
 from __future__ import annotations
+import html as _html
+import re
 from dataclasses import dataclass, field
 
 
@@ -372,3 +374,40 @@ def book_from_hebrew(hebrew_name: str) -> str:
         KeyError: If `hebrew_name` is not a recognised book.
     """
     return _BOOKS_BY_HEBREW[hebrew_name]
+
+
+# ---------------------------------------------------------------------------
+# Verse text cleanup
+#
+# he_tanakh.json (sourced from Sefaria) embeds raw HTML in its verse
+# strings: footnote markers/commentary, presentational tags for suspended
+# letters, ketiv/qere pairs and paragraph markers, and a few HTML entities
+# (&thinsp;, &nbsp;). Left as-is, these render as literal tag text in the
+# UI instead of clean Hebrew. Other translations (e.g. got_gothic.json)
+# use '<' '>' for unrelated purposes (textual-criticism brackets around
+# reconstructed text) and must NOT be run through this cleaner.
+# ---------------------------------------------------------------------------
+_FOOTNOTE_RE = re.compile(
+    r'<sup class="footnote-marker">.*?</sup>|<i class="footnote">.*?</i>',
+    re.DOTALL,
+)
+_TAG_RE = re.compile(r'<[^>]+>')
+
+
+def clean_verse_text(text: str) -> str:
+    """Strip Sefaria-style HTML markup from a Tanakh verse string.
+
+    Footnote markers and their commentary text are dropped entirely;
+    other presentational tags (suspended-letter <sup>, ketiv/qere <span>,
+    paragraph-marker <span>, <b>, <big>, <small>, <br>) are unwrapped,
+    keeping their inner text. HTML entities are then unescaped.
+
+    Args:
+        text: Raw verse text, possibly containing Sefaria HTML markup.
+
+    Returns:
+        Plain-text verse content with all markup removed.
+    """
+    cleaned = _FOOTNOTE_RE.sub('', text)
+    cleaned = _TAG_RE.sub('', cleaned)
+    return _html.unescape(cleaned)
