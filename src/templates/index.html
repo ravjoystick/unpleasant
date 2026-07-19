@@ -271,13 +271,16 @@ select option{background:var(--panel2);color:var(--text)}
   <div id="cat-tabbar" class="cat-tabbar"></div>
 
   <div class="srch-ctrl">
-    <span class="fk">Book</span>
-    <select id="sel-book" style="width:152px"></select>
-    <span class="fk" style="margin-left:6px">Search</span>
-    <input id="inp-search" type="text" style="flex:1;max-width:260px" placeholder="notes, text, tags…" autocomplete="off">
-    <span class="fk" style="margin-left:6px" title="Verse text size">Text</span>
+    <span class="fk" title="Verse text size">Text</span>
     <input id="rng-verse-size" type="range" min="11" max="44" step="0.5" value="13" title="Verse text size" style="width:130px">
-    <span id="lbl-count"></span>
+    <span class="fk" style="margin-left:10px" title="Color theme">Theme</span>
+    <select id="sel-theme2" style="width:100px">
+      <option value="crimson">Crimson</option>
+      <option value="inferno">Inferno</option>
+      <option value="abyss">Abyss</option>
+      <option value="void">Void</option>
+    </select>
+    <span id="lbl-count" style="margin-left:auto"></span>
   </div>
 
   <div id="panel-overview" class="srch-table-wrap" hidden></div>
@@ -291,7 +294,7 @@ select option{background:var(--panel2);color:var(--text)}
         <th class="c-cat">Categories</th>
       </tr></thead>
       <tbody id="tbl-body">
-        <tr><td colspan="3" class="placeholder">Pick a category above, or search / filter by book.</td></tr>
+        <tr><td colspan="3" class="placeholder">Pick a category above.</td></tr>
       </tbody>
     </table>
   </div>
@@ -348,13 +351,16 @@ initSizeControl('rng-verse-size', '--txt-verse', 'unpleasantVerseTextSize', 13);
 initSizeControl('rng-tl-scale',   '--tl-scale',   'unpleasantTlScale',      1.5, '');
 
 function initThemeControl(){
-  const sel = $('sel-theme');
+  const sels = [$('sel-theme'), $('sel-theme2')];
   const saved = localStorage.getItem('unpleasantTheme') || 'crimson';
   document.documentElement.dataset.theme = saved;
-  sel.value = saved;
-  sel.addEventListener('change', ()=>{
-    document.documentElement.dataset.theme = sel.value;
-    localStorage.setItem('unpleasantTheme', sel.value);
+  sels.forEach(sel=>{
+    sel.value = saved;
+    sel.addEventListener('change', ()=>{
+      document.documentElement.dataset.theme = sel.value;
+      localStorage.setItem('unpleasantTheme', sel.value);
+      sels.forEach(other=>{ if(other!==sel) other.value = sel.value; });
+    });
   });
 }
 initThemeControl();
@@ -592,17 +598,6 @@ function selSrchRow(idx){
   if(tr){ tr.classList.add('sel'); tr.scrollIntoView({block:'nearest'}); }
 }
 
-$('sel-book').addEventListener('change', async()=>{
-  const v=$('sel-book').value; if(!v) return;
-  setActiveTab(null); showPanel('results'); $('inp-search').value='';
-  await doSearch('book',v);
-});
-$('inp-search').addEventListener('input', debounce(async()=>{
-  const q=$('inp-search').value.trim();
-  if(!q){ $('lbl-count').textContent=''; return; }
-  setActiveTab(null); showPanel('results'); $('sel-book').value='';
-  await doSearch('search',q);
-},400));
 
 // ── category tab bar / overview / reference panels ─────────────────────────────
 let META = null;
@@ -620,14 +615,14 @@ function setActiveTab(key){
 
 async function selectOverview(){
   setActiveTab('overview');
-  $('sel-book').value=''; $('inp-search').value=''; $('lbl-count').textContent='';
+  $('lbl-count').textContent='';
   showPanel('overview');
   renderOverview();
 }
 
 async function selectReference(kind){
   setActiveTab(kind);
-  $('sel-book').value=''; $('inp-search').value=''; $('lbl-count').textContent='';
+  $('lbl-count').textContent='';
   showPanel('reference');
   if(!GEMATRIA) GEMATRIA = await api('/api/gematria');
   renderReference(kind);
@@ -635,7 +630,6 @@ async function selectReference(kind){
 
 async function selectCategory(name){
   setActiveTab(name);
-  $('sel-book').value=''; $('inp-search').value='';
   showPanel('results');
   await doSearch('category', name);
 }
@@ -814,9 +808,6 @@ async function init(){
   });
   LANG = META.default_lang;
   $('th-lang').textContent = LANG;
-
-  $('sel-book').appendChild(new Option('— Book —',''));
-  META.book_options.forEach(b=>$('sel-book').appendChild(new Option(b,b)));
 
   renderCatTabbar();
   await selectOverview();

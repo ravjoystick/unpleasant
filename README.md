@@ -4,7 +4,9 @@ A catalogue of Bible verses backing up every chapter of Dan Barker's *God: The M
 
 ## A personal note
 
-This was my first real project when I was learning Python. I've come back and polished bits of it here and there over the years, but never really had the time to finish it properly. If some friends want to jump in, maybe we can finally get it there.
+Actually I see now that all the original code is... gone, this is pretty much AI.
+I'm taking my original vision of this tool and putting it together now cuase once again I am testing a new thing I'm learning, AI.
+I'm finishing/starting new/ this project with it, its fun and frustrating at the same time.
 
 ## What it is
 

@@ -137,9 +137,6 @@ UNIT_TREE   = build_bible_tree(_KJV, CATEGORIES, HEB_BIBLE, NAME_MAP)
 ALL_BOOKS   = [b['name'] for b in _KJV]
 LANG_OPTIONS = sorted(BIBLES.keys())
 CAT_OPTIONS  = sorted(CATEGORIES.keys())
-BOOK_OPTIONS = sorted({v['book']
-                       for cat in CATEGORIES.values()
-                       for v in cat['verses'].values()})
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -364,7 +361,6 @@ def api_meta():
         'languages':    LANG_OPTIONS,
         'default_lang': DEFAULT_LANG,
         'kjv_books':    ALL_BOOKS,
-        'book_options': BOOK_OPTIONS,
     })
 
 
