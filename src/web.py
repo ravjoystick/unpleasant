@@ -602,6 +602,45 @@ _HTML = r"""<!DOCTYPE html>
   --txt-verse:  13px;
   --tl-scale: 1.5;
 }
+html[data-theme="inferno"] {
+  --bg:      #1a0d0a;
+  --panel:   #241209;
+  --panel2:  #2e1810;
+  --accent:  #ff6b35;
+  --accent2: #d4380d;
+  --text:    #f5e6d8;
+  --dim:     #b8927a;
+  --head:    #fff5ee;
+  --nav-bg:  #140a06;
+  --row-odd: #241209;
+  --row-evn: #1a0d0a;
+}
+html[data-theme="abyss"] {
+  --bg:      #060d1a;
+  --panel:   #0a1428;
+  --panel2:  #0f1e38;
+  --accent:  #2196f3;
+  --accent2: #00acc1;
+  --text:    #d8e8f0;
+  --dim:     #6688aa;
+  --head:    #ffffff;
+  --nav-bg:  #04080f;
+  --row-odd: #0f1e38;
+  --row-evn: #0a1428;
+}
+html[data-theme="void"] {
+  --bg:      #0a0a0a;
+  --panel:   #141414;
+  --panel2:  #1e1e1e;
+  --accent:  #d0d0d0;
+  --accent2: #888888;
+  --text:    #e0e0e0;
+  --dim:     #808080;
+  --head:    #ffffff;
+  --nav-bg:  #050505;
+  --row-odd: #1e1e1e;
+  --row-evn: #141414;
+}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;display:flex;flex-direction:column}
@@ -770,8 +809,14 @@ select option{background:var(--panel2);color:var(--text)}
   <span class="fk">Language</span>
   <select id="sel-lang" style="width:150px"></select>
   <span class="fk" style="margin-left:10px" title="Category button text size">Tabs</span>
-  <input id="rng-cat-size" type="range" min="9" max="16" step="1" value="11" title="Category button text size" style="width:70px">
-  <button class="mode-btn"        data-mode="explore"  onclick="setMode('explore')">Explore</button>
+  <input id="rng-cat-size" type="range" min="9" max="24" step="0.5" value="11" title="Category button text size" style="width:110px">
+  <span class="fk" style="margin-left:10px" title="Color theme">Theme</span>
+  <select id="sel-theme" style="width:100px">
+    <option value="crimson">Crimson</option>
+    <option value="inferno">Inferno</option>
+    <option value="abyss">Abyss</option>
+    <option value="void">Void</option>
+  </select>
   <button class="mode-btn active" data-mode="search"   onclick="setMode('search')">Catalogue</button>
   <button class="mode-btn"        data-mode="timeline" onclick="setMode('timeline')">Timeline</button>
 </div>
@@ -806,7 +851,7 @@ select option{background:var(--panel2);color:var(--text)}
     <span class="fk" style="margin-left:6px">Search</span>
     <input id="inp-search" type="text" style="flex:1;max-width:260px" placeholder="notes, text, tags…" autocomplete="off">
     <span class="fk" style="margin-left:6px" title="Verse text size">Text</span>
-    <input id="rng-verse-size" type="range" min="11" max="22" step="1" value="13" title="Verse text size" style="width:70px">
+    <input id="rng-verse-size" type="range" min="11" max="32" step="0.5" value="13" title="Verse text size" style="width:110px">
     <span id="lbl-count"></span>
   </div>
 
@@ -832,7 +877,7 @@ select option{background:var(--panel2);color:var(--text)}
   <div class="tl-ctrl">
     <span class="fk">God: The Most Unpleasant Character in All Fiction, across every book of the Bible</span>
     <span class="fk" style="margin-left:auto" title="Zoom (scales bar width, height, and book-name labels together)">Scale</span>
-    <input id="rng-tl-scale" type="range" min="0.4" max="6" step="0.1" value="1.5" title="Zoom (scales bar width, height, and book-name labels together)" style="width:120px">
+    <input id="rng-tl-scale" type="range" min="0.4" max="10" step="0.05" value="1.5" title="Zoom (scales bar width, height, and book-name labels together)" style="width:170px">
   </div>
   <div class="tl-chart-wrap">
     <div id="tl-chart" class="tl-chart"></div>
@@ -876,6 +921,18 @@ function initSizeControl(rangeId, cssVar, storageKey, fallback, unit='px'){
 initSizeControl('rng-cat-size',   '--txt-cat',   'unpleasantCatTextSize',   11);
 initSizeControl('rng-verse-size', '--txt-verse', 'unpleasantVerseTextSize', 13);
 initSizeControl('rng-tl-scale',   '--tl-scale',   'unpleasantTlScale',      1.5, '');
+
+function initThemeControl(){
+  const sel = $('sel-theme');
+  const saved = localStorage.getItem('unpleasantTheme') || 'crimson';
+  document.documentElement.dataset.theme = saved;
+  sel.value = saved;
+  sel.addEventListener('change', ()=>{
+    document.documentElement.dataset.theme = sel.value;
+    localStorage.setItem('unpleasantTheme', sel.value);
+  });
+}
+initThemeControl();
 
 let exploreLoaded  = false;
 let timelineLoaded = false;
