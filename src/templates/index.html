@@ -13,6 +13,7 @@
   --accent2: #8e44ad;
   --text:    #e8e8f0;
   --dim:     #7777aa;
+  --dim2:    #9999cc;
   --head:    #ffffff;
   --nav-bg:  #0a0a18;
   --bio-col: #4caf72;
@@ -31,6 +32,7 @@ html[data-theme="inferno"] {
   --accent2: #d4380d;
   --text:    #f5e6d8;
   --dim:     #b8927a;
+  --dim2:    #d9b598;
   --head:    #fff5ee;
   --nav-bg:  #140a06;
   --row-odd: #241209;
@@ -44,6 +46,7 @@ html[data-theme="abyss"] {
   --accent2: #00acc1;
   --text:    #d8e8f0;
   --dim:     #6688aa;
+  --dim2:    #88aacc;
   --head:    #ffffff;
   --nav-bg:  #04080f;
   --row-odd: #0f1e38;
@@ -57,6 +60,7 @@ html[data-theme="void"] {
   --accent2: #888888;
   --text:    #e0e0e0;
   --dim:     #808080;
+  --dim2:    #a8a8a8;
   --head:    #ffffff;
   --nav-bg:  #050505;
   --row-odd: #1e1e1e;
@@ -69,7 +73,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 /* top bar */
 .top-bar{display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid var(--panel2);flex-shrink:0}
 .app-title{flex:1;font-size:14px;font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mode-btn{background:var(--panel);color:var(--dim);border:1px solid var(--panel2);border-radius:4px;padding:4px 14px;font-size:12px;cursor:pointer;font-family:inherit;transition:.15s all}
+.mode-btn{background:var(--panel);color:var(--dim2);border:1px solid var(--panel2);border-radius:4px;padding:4px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s all}
 .mode-btn.active,.mode-btn:hover{background:var(--accent2);color:#fff;border-color:var(--accent2)}
 
 /* views */
@@ -152,7 +156,7 @@ tbody tr{cursor:pointer}
 
 /* category tab bar — small pill buttons, replaces the old category <select> */
 .cat-tabbar{display:flex;align-items:center;gap:5px;padding:7px 14px;background:var(--nav-bg);flex-shrink:0;flex-wrap:wrap;border-bottom:1px solid var(--panel2)}
-.cat-tab{font-size:var(--txt-cat);padding:4px 10px;border-radius:999px;white-space:nowrap;background:var(--panel);color:var(--dim);border:1px solid var(--panel2);cursor:pointer;font-family:inherit;transition:.15s all,.1s font-size}
+.cat-tab{font-size:var(--txt-cat);padding:4px 10px;border-radius:999px;white-space:nowrap;background:var(--panel);color:var(--dim2);border:1px solid var(--panel2);cursor:pointer;font-family:inherit;transition:.15s all,.1s font-size}
 .cat-tab:hover{border-color:var(--accent2);color:var(--text)}
 .cat-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
 .cat-tab .ct-n{font-family:monospace;font-size:calc(var(--txt-cat) - 2px);opacity:.65;margin-right:3px}
@@ -230,7 +234,7 @@ select option{background:var(--panel2);color:var(--text)}
   <span class="fk">Language</span>
   <select id="sel-lang" style="width:150px"></select>
   <span class="fk" style="margin-left:10px" title="Category button text size">Tabs</span>
-  <input id="rng-cat-size" type="range" min="9" max="24" step="0.5" value="11" title="Category button text size" style="width:110px">
+  <input id="rng-cat-size" type="range" min="9" max="36" step="0.5" value="11" title="Category button text size" style="width:130px">
   <span class="fk" style="margin-left:10px" title="Color theme">Theme</span>
   <select id="sel-theme" style="width:100px">
     <option value="crimson">Crimson</option>
@@ -272,7 +276,7 @@ select option{background:var(--panel2);color:var(--text)}
     <span class="fk" style="margin-left:6px">Search</span>
     <input id="inp-search" type="text" style="flex:1;max-width:260px" placeholder="notes, text, tags…" autocomplete="off">
     <span class="fk" style="margin-left:6px" title="Verse text size">Text</span>
-    <input id="rng-verse-size" type="range" min="11" max="32" step="0.5" value="13" title="Verse text size" style="width:110px">
+    <input id="rng-verse-size" type="range" min="11" max="44" step="0.5" value="13" title="Verse text size" style="width:130px">
     <span id="lbl-count"></span>
   </div>
 
@@ -298,7 +302,7 @@ select option{background:var(--panel2);color:var(--text)}
   <div class="tl-ctrl">
     <span class="fk">God: The Most Unpleasant Character in All Fiction, across every book of the Bible</span>
     <span class="fk" style="margin-left:auto" title="Zoom (scales bar width, height, and book-name labels together)">Scale</span>
-    <input id="rng-tl-scale" type="range" min="0.4" max="10" step="0.05" value="1.5" title="Zoom (scales bar width, height, and book-name labels together)" style="width:170px">
+    <input id="rng-tl-scale" type="range" min="0.4" max="16" step="0.05" value="1.5" title="Zoom (scales bar width, height, and book-name labels together)" style="width:190px">
   </div>
   <div class="tl-chart-wrap">
     <div id="tl-chart" class="tl-chart"></div>
