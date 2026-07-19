@@ -325,7 +325,7 @@ app = Flask(__name__, static_folder=None)
 
 @app.route('/')
 def index():
-    """Serve the single-page Explore/Catalogue frontend.
+    """Serve the single-page Catalogue/Timeline frontend.
 
     Read from templates/index.html on every request (rather than caching
     it at import time) so frontend edits show up on a browser refresh
