@@ -53,7 +53,7 @@
             'search': ['pregnant women killed in siege', 'ripped open pregnant women', 'mass feticide in conquest'],
         },
         5: {
-            'notes': 'God commands killing all women who are not virgins — many would be pregnant',
+            'notes': 'God commands killing all women who are not virgins many would be pregnant',
             'book': 'Numbers',
             'chapter': 31,
             'verse': [17],

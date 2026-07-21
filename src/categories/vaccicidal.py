@@ -39,14 +39,14 @@
             'search': ['destroy all livestock', 'animals killed by god', 'no animal spared'],
         },
         3: {
-            'notes': 'God drowns all animals on earth in the flood — only those on the Ark survive',
+            'notes': 'God drowns all animals on earth in the flood only those on the Ark survive',
             'book': 'Genesis',
             'chapter': 7,
             'verse': [21, 22, 23],
             'search': ['flood kills all animals', 'god drowns all animals on earth', 'mass animal genocide flood'],
         },
         4: {
-            'notes': 'God sends hail that kills livestock in the fields — seventh plague of Egypt',
+            'notes': 'God sends hail that kills livestock in the fields seventh plague of Egypt',
             'book': 'Exodus',
             'chapter': 9,
             'verse': [19, 22, 25],
@@ -67,7 +67,7 @@
             'search': ['hail destroys vines and livestock', 'god kills animals with frost', 'animal death in divine punishment'],
         },
         7: {
-            'notes': 'God commands the killing of all Amalekite animals too — not just people',
+            'notes': 'God commands the killing of all Amalekite animals too not just people',
             'book': '1 Samuel',
             'chapter': 15,
             'verse': [3],

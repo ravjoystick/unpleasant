@@ -19,34 +19,34 @@
     'name': 'genocidal',
     'nice_name': 'Genocidal',
     'dictionary': """
-    1. of or relating to genocide — the deliberate killing of a large group of people.
+    1. of or relating to genocide the deliberate killing of a large group of people.
     2. intending to destroy, in whole or in part, a national, ethnic, racial, or religious group.
     3. commanding or causing the total annihilation of entire populations.
     """,
     'verses': {
         1: {
-            'notes': 'God decides to wipe out all of humanity — the largest genocide ever',
+            'notes': 'God decides to wipe out all of humanity the largest genocide ever',
             'book': 'Genesis',
             'chapter': 6,
             'verse': [5, 6, 7, 17],
             'search': ['noah flood mass genocide', 'god kills all humans', 'omniscient god regrets creating people'],
         },
         2: {
-            'notes': 'God commands total annihilation — let nothing that breathes remain alive',
+            'notes': 'God commands total annihilation let nothing that breathes remain alive',
             'book': 'Deuteronomy',
             'chapter': 20,
             'verse': [16, 17],
             'search': ['annihilate everything that breathes', 'god commands total genocide', 'leave nothing alive'],
         },
         3: {
-            'notes': 'God orders the complete genocide of the Amalekites — kill every man woman child and animal',
+            'notes': 'God orders the complete genocide of the Amalekites kill every man woman child and animal',
             'book': '1 Samuel',
             'chapter': 15,
             'verse': [2, 3],
             'search': ['kill every amalekite', 'god orders total genocide', 'kill all including animals'],
         },
         4: {
-            'notes': 'The genocide of Jericho — every living thing in the city killed',
+            'notes': 'The genocide of Jericho every living thing in the city killed',
             'book': 'Joshua',
             'chapter': 6,
             'verse': [21],
@@ -74,7 +74,7 @@
             'search': ['god hardened pharaoh heart', 'god manufactured conditions for mass killing', 'drowning egyptian army'],
         },
         8: {
-            'notes': 'God destroys Sodom and Gomorrah — every man, woman, and child',
+            'notes': 'God destroys Sodom and Gomorrah every man, woman, and child',
             'book': 'Genesis',
             'chapter': 19,
             'verse': [24, 25],

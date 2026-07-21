@@ -53,7 +53,7 @@
             'search': ['i will take vengeance', 'spare no man', 'god of vengeance'],
         },
         5: {
-            'notes': 'Vengeance belongs to God — he will repay',
+            'notes': 'Vengeance belongs to God he will repay',
             'book': 'Deuteronomy',
             'chapter': 32,
             'verse': [35],

@@ -73,6 +73,21 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 /* top bar */
 .top-bar{display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px solid var(--panel2);flex-shrink:0}
 .app-title{flex:1;font-size:14px;font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#book-cover-thumb{height:36px;border-radius:3px;cursor:pointer;flex-shrink:0;box-shadow:0 0 0 1px var(--panel2);transition:.15s box-shadow;vertical-align:middle}
+#book-cover-thumb:hover{box-shadow:0 0 0 1px var(--accent2)}
+
+/* welcome / book-cover overlay */
+.cover-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:50;cursor:pointer;padding:24px}
+.cover-modal[hidden]{display:none}
+.cover-modal-inner{max-width:min(90vw,480px);max-height:90vh;overflow-y:auto;text-align:center;cursor:default;background:var(--panel);border:1px solid var(--panel2);border-radius:10px;padding:22px}
+.cover-modal-inner img{max-width:220px;max-height:50vh;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+.cover-modal-cap{margin-top:12px;color:var(--text);font-size:13px;line-height:1.5}
+.cover-modal-close{position:absolute;top:16px;right:20px;color:#fff;font-size:28px;line-height:1;cursor:pointer;opacity:.7;transition:.15s opacity}
+.cover-modal-close:hover{opacity:1}
+.welcome-body{text-align:left;margin-top:16px;font-size:13px;line-height:1.65;color:var(--text)}
+.welcome-body p{margin-bottom:10px}
+.welcome-buy{margin-top:12px;padding-top:12px;border-top:1px solid var(--panel2);color:var(--dim2);font-size:12.5px;text-align:left}
+.welcome-disclaimer{margin-top:10px;color:var(--dim);font-size:11px;font-style:italic;text-align:left}
 .mode-btn{background:var(--panel);color:var(--dim2);border:1px solid var(--panel2);border-radius:4px;padding:4px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s all}
 .mode-btn.active,.mode-btn:hover{background:var(--accent2);color:#fff;border-color:var(--accent2)}
 
@@ -154,7 +169,7 @@ tbody tr{cursor:pointer}
 .placeholder{text-align:center;color:var(--dim);padding:40px;font-style:italic}
 #lbl-count{margin-left:auto;font-size:11px;color:var(--dim);white-space:nowrap}
 
-/* category tab bar — small pill buttons, replaces the old category <select> */
+/* category tab bar small pill buttons, replaces the old category <select> */
 .cat-tabbar{display:flex;align-items:center;gap:5px;padding:7px 14px;background:var(--nav-bg);flex-shrink:0;flex-wrap:wrap;border-bottom:1px solid var(--panel2)}
 .cat-tab{font-size:var(--txt-cat);padding:4px 10px;border-radius:999px;white-space:nowrap;background:var(--panel);color:var(--dim2);border:1px solid var(--panel2);cursor:pointer;font-family:inherit;transition:.15s all,.1s font-size}
 .cat-tab:hover{border-color:var(--accent2);color:var(--text)}
@@ -230,6 +245,7 @@ select option{background:var(--panel2);color:var(--text)}
 
 <!-- top bar -->
 <div class="top-bar">
+  <img id="book-cover-thumb" src="/assets/book-cover.jpg" alt="Book cover of God: The Most Unpleasant Character in All Fiction by Dan Barker" title="About this project &amp; the book it's based on. Click to open." onclick="openCoverModal()">
   <span class="app-title">God: The Most Unpleasant Character in All Fiction</span>
   <span class="fk">Language</span>
   <select id="sel-lang" style="width:150px"></select>
@@ -244,6 +260,22 @@ select option{background:var(--panel2);color:var(--text)}
   </select>
   <button class="mode-btn active" data-mode="search"   onclick="setMode('search')">Catalogue</button>
   <button class="mode-btn"        data-mode="timeline" onclick="setMode('timeline')">Timeline</button>
+  <button class="mode-btn" style="margin-left:10px" title="About this project &amp; the book" onclick="openCoverModal()">About</button>
+</div>
+
+<!-- welcome / book cover overlay -->
+<div id="cover-modal" class="cover-modal" hidden onclick="closeCoverModal()">
+  <span class="cover-modal-close" onclick="closeCoverModal()">&times;</span>
+  <div class="cover-modal-inner" onclick="event.stopPropagation()">
+    <img src="/assets/book-cover.jpg" alt="God: The Most Unpleasant Character in All Fiction book cover">
+    <div class="cover-modal-cap"><strong>God: The Most Unpleasant Character in All Fiction</strong><br>Dan Barker · Foreword by Richard Dawkins (2016)</div>
+    <div class="welcome-body">
+      <p>Welcome. This is an independent, fan-made reference catalogue built around Dan Barker's book. It collects and cross-references the Bible verses cited across its 27 "flaw" chapters Jealous, Unjust, Genocidal, and so on — against 42 translations and the original Hebrew text, and lets you browse them by category or across a timeline of the whole Bible.</p>
+      <p>What's here is the skeleton, not the book. Barker's actual chapters carry the full argument, the context behind each claim, his own history as a preacher-turned-atheist, and a lot of wit that a list of citations can't reproduce on its own. If any of this catalogue resonates — or gets under your skin — the book itself is a far richer read, and buying it supports the author directly.</p>
+      <div class="welcome-buy">📖 <strong>God: The Most Unpleasant Character in All Fiction</strong> by Dan Barker · ISBN 978-1-4549-1963-6 · available at your local bookstore or library.</div>
+      <div class="welcome-disclaimer">This site is not affiliated with Dan Barker or his publisher — just a reader's catalogue built for study and reference.</div>
+    </div>
+  </div>
 </div>
 
 <!-- EXPLORE VIEW -->
@@ -364,6 +396,17 @@ function initThemeControl(){
   });
 }
 initThemeControl();
+
+function openCoverModal(){ $('cover-modal').hidden = false; }
+function closeCoverModal(){ $('cover-modal').hidden = true; }
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape' && !$('cover-modal').hidden) closeCoverModal();
+});
+
+if(!localStorage.getItem('unpleasantWelcomeSeen')){
+  openCoverModal();
+  localStorage.setItem('unpleasantWelcomeSeen', '1');
+}
 
 let exploreLoaded  = false;
 let timelineLoaded = false;

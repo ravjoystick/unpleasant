@@ -117,8 +117,8 @@ def _strip_translator_notes(text: str) -> str:
     """Clean the {curly-brace} annotations embedded in KJV source text.
 
     KJV text embeds two kinds of annotations: plain supplied words like
-    ``{was}`` (needed for the sentence to read — unwrapped in place) and
-    marginal notes like ``{continually: Heb. every day}`` (asides — dropped
+    ``{was}`` (needed for the sentence to read unwrapped in place) and
+    marginal notes like ``{continually: Heb. every day}`` (asides dropped
     entirely).
 
     Args:

@@ -39,14 +39,14 @@
             'search': ['gay people should be killed', 'death penalty for homosexuality', 'both shall be put to death'],
         },
         3: {
-            'notes': 'God destroys Sodom — later interpreted as judgment on homosexuality',
+            'notes': 'God destroys Sodom later interpreted as judgment on homosexuality',
             'book': 'Genesis',
             'chapter': 19,
             'verse': [1, 4, 5, 24, 25],
             'search': ['sodom destroyed for homosexuality', 'god burns gay city', 'sodom and gomorrah fire'],
         },
         4: {
-            'notes': 'God gives people over to shameful lusts — women and men burning for same sex',
+            'notes': 'God gives people over to shameful lusts women and men burning for same sex',
             'book': 'Romans',
             'chapter': 1,
             'verse': [24, 26, 27],
@@ -60,7 +60,7 @@
             'search': ['homosexuals excluded from heaven', 'effeminate men excluded', 'abusers of themselves with mankind'],
         },
         6: {
-            'notes': 'The law is made for sodomites — implying homosexuality is criminal',
+            'notes': 'The law is made for sodomites implying homosexuality is criminal',
             'book': '1 Timothy',
             'chapter': 1,
             'verse': [9, 10],
@@ -74,7 +74,7 @@
             'search': ['sodom eternal fire', 'sexual immorality punished with eternal fire', 'god\'s example of gay punishment'],
         },
         8: {
-            'notes': 'No shrine prostitutes of either sex permitted — targeting male same-sex practices',
+            'notes': 'No shrine prostitutes of either sex permitted targeting male same-sex practices',
             'book': 'Deuteronomy',
             'chapter': 23,
             'verse': [17, 18],
@@ -88,7 +88,7 @@
             'search': ['male shrine prostitutes destroyed', 'god approves destroying gay spaces', 'josiah destroys sodomite houses'],
         },
         10: {
-            'notes': 'The men of Gibeah demand to have sex with a male visitor — destroyed as Sodom was',
+            'notes': 'The men of Gibeah demand to have sex with a male visitor destroyed as Sodom was',
             'book': 'Judges',
             'chapter': 19,
             'verse': [22, 23, 24, 25],

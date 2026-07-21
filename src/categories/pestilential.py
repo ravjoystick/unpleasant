@@ -53,7 +53,7 @@
             'search': ['god\'s list of plagues', 'disease as punishment', '82 curses including diseases'],
         },
         5: {
-            'notes': 'God sends the ten plagues on Egypt — water to blood, frogs, gnats, flies, disease',
+            'notes': 'God sends the ten plagues on Egypt water to blood, frogs, gnats, flies, disease',
             'book': 'Exodus',
             'chapter': 9,
             'verse': [8, 9, 10, 14, 15],

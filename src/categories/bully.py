@@ -25,21 +25,21 @@
     """,
     'verses': {
         1: {
-            'notes': '"He destroys both the blameless and the wicked — he mocks at the calamity of the innocent"',
+            'notes': '"He destroys both the blameless and the wicked he mocks at the calamity of the innocent"',
             'book': 'Job',
             'chapter': 9,
             'verse': [22, 23],
             'search': ['god mocks innocent suffering', 'destroys blameless and wicked equally', 'god laughs at calamity of innocent'],
         },
         2: {
-            'notes': 'God intimidates Job by listing all the things Job cannot do — "Where were you?"',
+            'notes': 'God intimidates Job by listing all the things Job cannot do "Where were you?"',
             'book': 'Job',
             'chapter': 38,
             'verse': [1, 2, 3, 4],
             'search': ['where were you when i laid foundations', 'god bullies job with questions', 'god wins argument with intimidation'],
         },
         3: {
-            'notes': 'God continues the intimidation speech — can you do any of these things?',
+            'notes': 'God continues the intimidation speech can you do any of these things?',
             'book': 'Job',
             'chapter': 40,
             'verse': [1, 2, 3, 4, 5],
@@ -67,14 +67,14 @@
             'search': ['public spectacle of punishment', 'god makes an example', 'swallowed alive to intimidate others'],
         },
         7: {
-            'notes': 'God sends bears to attack children — making an example of disrespect',
+            'notes': 'God sends bears to attack children making an example of disrespect',
             'book': '2 Kings',
             'chapter': 2,
             'verse': [23, 24],
             'search': ['god uses animals to bully children', 'disproportionate response to mockery', 'bears sent to terrorize'],
         },
         8: {
-            'notes': 'Bow down or be destroyed — no alternative offered',
+            'notes': 'Bow down or be destroyed no alternative offered',
             'book': 'Psalms',
             'chapter': 2,
             'verse': [9, 10, 11, 12],
@@ -102,7 +102,7 @@
             'search': ['god threatens miriam further', 'you are lucky i spared you', 'punishment as favor'],
         },
         12: {
-            'notes': 'God claims he spared Israel — as if not sparing them is a credible threat',
+            'notes': 'God claims he spared Israel as if not sparing them is a credible threat',
             'book': 'Ezekiel',
             'chapter': 20,
             'verse': [17],

@@ -6,13 +6,14 @@ Run:  python src/web.py
 """
 from __future__ import annotations
 import os, ast, json, argparse, threading, webbrowser
-from flask import Flask, jsonify, request, Response
+from flask import Flask, jsonify, request, Response, send_from_directory
 from unit import build_bible_tree
 
 BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
 BIBLES_DIR   = os.path.join(BASE_DIR, 'bibles')
 CATS_DIR     = os.path.join(BASE_DIR, 'categories')
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
+ASSETS_DIR   = os.path.join(TEMPLATE_DIR, 'assets')
 
 # ── data loading ──────────────────────────────────────────────────────────────
 
@@ -334,6 +335,12 @@ def index():
     with open(os.path.join(TEMPLATE_DIR, 'index.html'), encoding='utf-8-sig') as f:
         html = f.read()
     return Response(html, mimetype='text/html; charset=utf-8')
+
+
+@app.route('/assets/<path:filename>')
+def assets(filename):
+    """Serve static frontend assets (book cover, etc.) from templates/assets/."""
+    return send_from_directory(ASSETS_DIR, filename)
 
 
 @app.route('/api/meta')

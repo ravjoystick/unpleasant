@@ -32,7 +32,7 @@
             'search': ['god orders father to kill son', 'isaac sacrifice', 'child murder as test of faith'],
         },
         2: {
-            'notes': 'Abraham raises the knife to kill his son — God lets him go all the way',
+            'notes': 'Abraham raises the knife to kill his son God lets him go all the way',
             'book': 'Genesis',
             'chapter': 22,
             'verse': [9, 10, 11, 12],
@@ -81,7 +81,7 @@
             'search': ['love god more than your children', 'children secondary to god', 'family sacrifice for god'],
         },
         9: {
-            'notes': 'King Manasseh burned his own son as an offering — following the customs God had driven out',
+            'notes': 'King Manasseh burned his own son as an offering following the customs God had driven out',
             'book': '2 Kings',
             'chapter': 21,
             'verse': [6],

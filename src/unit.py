@@ -1,5 +1,5 @@
 """
-unit.py — recursive tree node with biological / chemical annotation.
+unit.py recursive tree node with biological / chemical annotation.
 
 A Unit represents any level of a hierarchical text corpus:
     root → book → chapter → verse   (main Bible tree)
@@ -224,7 +224,7 @@ _ENTRIES: list[tuple] = [
     (['camphor', 'henna'],
      'henna', 'Lawsonia inermis', 'lawsone', 'C₁₀H₆O₃', 'organism', True),
 
-    # ── water (inorganic — tracked separately, is_organic=False) ──────────────
+    # ── water (inorganic tracked separately, is_organic=False) ──────────────
     (['water', 'waters', 'river', 'rivers', 'flood', 'floods',
       'sea', 'seas', 'rain', 'dew', 'fountain', 'fountains',
       'well', 'wells', 'spring', 'springs', 'stream', 'streams',
@@ -323,7 +323,7 @@ class Unit:
     category_tags: list[str]   = field(default_factory=list)
     notes:         str | None  = None
 
-    # ── open metadata bag — attach anything a parser needs ─────────────────────
+    # ── open metadata bag attach anything a parser needs ─────────────────────
     meta: dict = field(default_factory=dict)
 
     def __hash__(self) -> int:
@@ -494,7 +494,7 @@ class Unit:
         """Scan text for bio/chemo keywords and update this node's hit counts.
 
         Checks bigrams first (more specific), then unigrams. Safe to call
-        multiple times — counts accumulate rather than reset.
+        multiple times counts accumulate rather than reset.
 
         Args:
             text: The raw verse text to scan.

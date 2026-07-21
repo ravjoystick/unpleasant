@@ -53,7 +53,7 @@
             'search': ['god\'s name trademark', 'taking name in vain', 'vain use of name'],
         },
         5: {
-            'notes': 'The Sabbath commandment — God needed to rest',
+            'notes': 'The Sabbath commandment God needed to rest',
             'book': 'Exodus',
             'chapter': 20,
             'verse': [8, 9, 10, 11],
@@ -88,7 +88,7 @@
             'search': ['no mixing seeds', 'hybrid animals forbidden', 'two kinds of cloth illegal'],
         },
         10: {
-            'notes': 'Detailed dietary laws — what you may and may not eat',
+            'notes': 'Detailed dietary laws what you may and may not eat',
             'book': 'Leviticus',
             'chapter': 11,
             'verse': [1, 2, 3, 4, 7, 9, 10, 11, 12],

@@ -102,7 +102,7 @@
             'search': ['rewarded for killing mixed couple', 'murder of interracial couple praised', 'racial purity hero'],
         },
         12: {
-            'notes': 'God calls Israel his firstborn son — placing them above all other peoples',
+            'notes': 'God calls Israel his firstborn son placing them above all other peoples',
             'book': 'Exodus',
             'chapter': 4,
             'verse': [22, 23],

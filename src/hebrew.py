@@ -296,7 +296,7 @@ def to_hebrew(n: int) -> str:
 
 
 # Hundreds digits (100/200/300/400), combined by repeating 'ת' (400) as
-# needed for anything past it — e.g. 500 = 'ת'+'ק' = 'תק'. Bible chapter
+# needed for anything past it e.g. 500 = 'ת'+'ק' = 'תק'. Bible chapter
 # and verse numbers never get close to that range, but this keeps
 # to_hebrew_number() correct rather than silently capping at 100.
 _HUNDREDS: dict[int, str] = {1: 'ק', 2: 'ר', 3: 'ש', 4: 'ת'}

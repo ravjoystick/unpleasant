@@ -32,7 +32,7 @@
             'search': ['i will not pity nor spare', 'god refuses mercy', 'destroy without mercy'],
         },
         2: {
-            'notes': 'God commands utterly destroying other nations — show no mercy to them',
+            'notes': 'God commands utterly destroying other nations show no mercy to them',
             'book': 'Deuteronomy',
             'chapter': 7,
             'verse': [1, 2],
@@ -60,7 +60,7 @@
             'search': ['eye will not spare', 'no pity from god', 'god explicitly states mercilessness'],
         },
         6: {
-            'notes': 'Eye for an eye — no pity: life for life, eye for eye, tooth for tooth',
+            'notes': 'Eye for an eye no pity: life for life, eye for eye, tooth for tooth',
             'book': 'Deuteronomy',
             'chapter': 19,
             'verse': [21],

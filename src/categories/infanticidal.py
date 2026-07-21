@@ -88,7 +88,7 @@
             'search': ['children killed in conquest', 'no mercy for young', 'god approves killing children'],
         },
         10: {
-            'notes': 'Israelites are told to kill the children of Midian — all the boys',
+            'notes': 'Israelites are told to kill the children of Midian all the boys',
             'book': 'Numbers',
             'chapter': 31,
             'verse': [17],

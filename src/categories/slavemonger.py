@@ -46,7 +46,7 @@
             'search': ['buy slaves from foreign nations', 'slaves as inherited property', 'god gives permission to own slaves forever'],
         },
         4: {
-            'notes': 'God\'s slave law — Hebrew slaves may be released after 6 years, but foreign slaves never',
+            'notes': 'God\'s slave law Hebrew slaves may be released after 6 years, but foreign slaves never',
             'book': 'Exodus',
             'chapter': 21,
             'verse': [1, 2, 3, 4, 5, 6],
@@ -67,7 +67,7 @@
             'search': ['canaanites forced into labor', 'god approves forced labor of other peoples', 'conquest leads to forced labor'],
         },
         7: {
-            'notes': 'Slaves must obey their masters — the New Testament endorses it too',
+            'notes': 'Slaves must obey their masters the New Testament endorses it too',
             'book': 'Ephesians',
             'chapter': 6,
             'verse': [5, 6, 7, 8],

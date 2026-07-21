@@ -25,7 +25,7 @@
     """,
     'verses': {
         1: {
-            'notes': 'God\'s anger kindled against Israel for worshipping other gods — destroy them from the earth',
+            'notes': 'God\'s anger kindled against Israel for worshipping other gods destroy them from the earth',
             'book': 'Deuteronomy',
             'chapter': 6,
             'verse': [14, 15],
@@ -39,7 +39,7 @@
             'search': ['anger and jealousy smoke against man', 'god\'s name blotted out in anger', 'smoking jealous anger'],
         },
         3: {
-            'notes': 'The Lord\'s wrath kindled against Israel — he handed them to enemies',
+            'notes': 'The Lord\'s wrath kindled against Israel he handed them to enemies',
             'book': '2 Kings',
             'chapter': 13,
             'verse': [3],
@@ -60,14 +60,14 @@
             'search': ['band of destroying angels from god\'s anger', 'god\'s wrath unleashed', 'indignation and distress from god'],
         },
         6: {
-            'notes': 'God angry at Israel for lusting after foreign women — kills 24,000',
+            'notes': 'God angry at Israel for lusting after foreign women kills 24,000',
             'book': 'Numbers',
             'chapter': 25,
             'verse': [3, 4],
             'search': ['god kills thousands for intermarriage', 'anger provoked by sexual mixing', 'wrath kills 24000'],
         },
         7: {
-            'notes': 'God\'s face against those who do evil — to cut off their memory',
+            'notes': 'God\'s face against those who do evil to cut off their memory',
             'book': 'Psalms',
             'chapter': 34,
             'verse': [16],
@@ -81,7 +81,7 @@
             'search': ['god angry at solomon for foreign wives', 'anger leads to kingdom splitting', 'loving foreign women angers god'],
         },
         9: {
-            'notes': 'God\'s anger blazes when Israel made him a golden calf — he would have destroyed them',
+            'notes': 'God\'s anger blazes when Israel made him a golden calf he would have destroyed them',
             'book': 'Exodus',
             'chapter': 32,
             'verse': [9, 10],

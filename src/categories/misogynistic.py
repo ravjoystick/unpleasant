@@ -32,7 +32,7 @@
             'search': ['your husband shall rule over you', 'woman cursed at creation', 'pain in childbirth punishment'],
         },
         2: {
-            'notes': 'Ordeal of bitter water — only wives tested for infidelity, never husbands',
+            'notes': 'Ordeal of bitter water only wives tested for infidelity, never husbands',
             'book': 'Numbers',
             'chapter': 5,
             'verse': [11, 12, 13, 14, 15, 19, 20, 21, 22, 27, 28, 29, 30, 31],
@@ -102,7 +102,7 @@
             'search': ['captured women as wives', 'war bride with no consent', 'women as war spoils'],
         },
         12: {
-            'notes': 'The census counts only men — women are not counted',
+            'notes': 'The census counts only men women are not counted',
             'book': 'Numbers',
             'chapter': 1,
             'verse': [1, 2, 3],
